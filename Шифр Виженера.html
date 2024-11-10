@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Шифрование и дешифрование шифра Виженера</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            margin: 22px;
+        }
+        input, button {
+            margin: 5px 0;
+            padding: 10px;
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <strong>Шифр Виженера</strong>
+        <br>
+        <label for="plaintext">Слово/фраза:</label>
+        <input type="text" id="plaintext" />
+        
+        <label for="key">Ключ для шифрования:</label>
+        <input type="text" id="key" />
+
+        <button onclick="encrypt()">Зашифровать</button>
+        <button onclick="decrypt()">Дешифровать</button>
+        
+        <h3>Результат:</h3>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function vigenere_encrypt(plaintext, key) {
+            let encrypted_text = [];
+            const key_length = key.length;
+            const key_as_int = key.toUpperCase().split('').map(char => char.charCodeAt(0) - 65);
+            const plaintext_int = plaintext.toUpperCase().split('').filter(char => /[A-Z]/.test(char)).map(char => char.charCodeAt(0) - 65);
+
+            for (let i = 0; i < plaintext_int.length; i++) {
+                const value = (plaintext_int[i] + key_as_int[i % key_length]) % 26;
+                encrypted_text.push(String.fromCharCode(value + 65));
+            }
+
+            return encrypted_text.join('');
+        }
+
+        function vigenere_decrypt(ciphertext, key) {
+            let decrypted_text = [];
+            const key_length = key.length;
+            const key_as_int = key.toUpperCase().split('').map(char => char.charCodeAt(0) - 65);
+            const ciphertext_int = ciphertext.toUpperCase().split('').filter(char => /[A-Z]/.test(char)).map(char => char.charCodeAt(0) - 65);
+
+            for (let i = 0; i < ciphertext_int.length; i++) {
+                const value = (ciphertext_int[i] - key_as_int[i % key_length] + 26) % 26;
+                decrypted_text.push(String.fromCharCode(value + 65));
+            }
+
+            return decrypted_text.join('');
+        }
+
+        function encrypt() {
+            const plaintext = document.getElementById("plaintext").value;
+            const key = document.getElementById("key").value;
+            const result = vigenere_encrypt(plaintext, key);
+            document.getElementById("result").innerText = `Зашифрованный текст: ${result}`;
+        }
+
+        function decrypt() {
+            const ciphertext = document.getElementById("plaintext").value;
+            const key = document.getElementById("key").value;
+            const result = vigenere_decrypt(ciphertext, key);
+            document.getElementById("result").innerText = `Расшифрованный текст: ${result}`;
+        }
+    </script>
+</body>
+</html>
